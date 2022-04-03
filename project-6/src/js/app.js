@@ -118,10 +118,11 @@ App = {
     },
 
     bindEvents: function() {
-        $(document).on('click', App.handleButtonClick);
+        $('button').on('click', App.handleButtonClick);
     },
 
     handleButtonClick: async function(event) {
+        App.readForm();
         event.preventDefault();
 
         App.getMetaskAccountID();
@@ -175,7 +176,8 @@ App = {
                 App.originFarmInformation, 
                 App.originFarmLatitude, 
                 App.originFarmLongitude, 
-                App.productNotes
+                App.productNotes,
+                {from: App.metamaskAccountID}
             );
         }).then(function(result) {
             $("#ftc-item").text(result);
