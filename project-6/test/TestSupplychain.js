@@ -44,6 +44,8 @@ contract('SupplyChain', function(accounts) {
     // 1st Test
     it("Testing smart contract function harvestItem() that allows a farmer to harvest coffee", async() => {
         const supplyChain = await SupplyChain.deployed()
+
+        await supplyChain.addFarmer(originFarmerID, {from: ownerID})
         
         // Declare and Initialize a variable for event
         var eventEmitted = false
@@ -157,6 +159,8 @@ contract('SupplyChain', function(accounts) {
     it("Testing smart contract function buyItem() that allows a distributor to buy coffee", async() => {
         const supplyChain = await SupplyChain.deployed()
         
+        await supplyChain.addDistributor(distributorID, {from: ownerID});
+        
         // Declare and Initialize a variable for event
         let eventEmitted = false;
         
@@ -211,6 +215,8 @@ contract('SupplyChain', function(accounts) {
     it("Testing smart contract function receiveItem() that allows a retailer to mark coffee received", async() => {
         const supplyChain = await SupplyChain.deployed()
         
+        await supplyChain.addRetailer(retailerID, {from: ownerID});
+        
         // Declare and Initialize a variable for event
         let eventEmitted = false;
         
@@ -240,6 +246,8 @@ contract('SupplyChain', function(accounts) {
     // 8th Test
     it("Testing smart contract function purchaseItem() that allows a consumer to purchase coffee", async() => {
         const supplyChain = await SupplyChain.deployed()
+        
+        await supplyChain.addConsumer(consumerID, {from: ownerID});
         
         // Declare and Initialize a variable for event
         let eventEmitted = false;

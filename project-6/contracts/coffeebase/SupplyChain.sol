@@ -1,6 +1,13 @@
 pragma solidity ^0.4.24;
+
+import '../coffeecore/Ownable.sol';
+import '../coffeeaccesscontrol/FarmerRole.sol';
+import '../coffeeaccesscontrol/DistributorRole.sol';
+import '../coffeeaccesscontrol/RetailerRole.sol';
+import '../coffeeaccesscontrol/ConsumerRole.sol';
+
 // Define a contract 'Supplychain'
-contract SupplyChain {
+contract SupplyChain is Ownable, FarmerRole, DistributorRole, RetailerRole, ConsumerRole {
 
   // Define 'owner'
   address owner;
@@ -154,6 +161,7 @@ contract SupplyChain {
 
   // Define a function 'harvestItem' that allows a farmer to mark an item 'Harvested'
   function harvestItem(uint _upc, address _originFarmerID, string _originFarmName, string _originFarmInformation, string  _originFarmLatitude, string  _originFarmLongitude, string  _productNotes) public 
+  onlyFarmer
   {
     // Add the new item as part of Harvest
     items[_upc] = Item({
@@ -173,6 +181,7 @@ contract SupplyChain {
       retailerID: 0,
       consumerID: 0
     });
+
     
     // Increment sku
     sku = sku + 1;
@@ -184,6 +193,7 @@ contract SupplyChain {
 
   // Define a function 'processtItem' that allows a farmer to mark an item 'Processed'
   function processItem(uint _upc) public 
+  onlyFarmer
   // Call modifier to check if upc has passed previous supply chain stage
   harvested(_upc)
   // Call modifier to verify caller of this function
@@ -199,9 +209,9 @@ contract SupplyChain {
 
   // Define a function 'packItem' that allows a farmer to mark an item 'Packed'
   function packItem(uint _upc) public 
+  onlyFarmer
   // Call modifier to check if upc has passed previous supply chain stage
   processed(_upc)
-  
   // Call modifier to verify caller of this function
   verifyCaller(items[_upc].ownerID)
   {
@@ -213,6 +223,7 @@ contract SupplyChain {
 
   // Define a function 'sellItem' that allows a farmer to mark an item 'ForSale'
   function sellItem(uint _upc, uint _price) public 
+  onlyFarmer
   // Call modifier to check if upc has passed previous supply chain stage
   packed(_upc)
   
@@ -231,6 +242,8 @@ contract SupplyChain {
   // Use the above defined modifiers to check if the item is available for sale, if the buyer has paid enough, 
   // and any excess ether sent is refunded back to the buyer
   function buyItem(uint _upc) public payable 
+    onlyDistributor
+    
     // Call modifier to check if upc has passed previous supply chain stage
     forSale(_upc)
     
@@ -257,6 +270,7 @@ contract SupplyChain {
   // Define a function 'shipItem' that allows the distributor to mark an item 'Shipped'
   // Use the above modifers to check if the item is sold
   function shipItem(uint _upc) public 
+    onlyDistributor
     // Call modifier to check if upc has passed previous supply chain stage
     sold(_upc)
     
@@ -274,6 +288,7 @@ contract SupplyChain {
   // Define a function 'receiveItem' that allows the retailer to mark an item 'Received'
   // Use the above modifiers to check if the item is shipped
   function receiveItem(uint _upc) public 
+    onlyRetailer
     // Call modifier to check if upc has passed previous supply chain stage
     shipped(_upc)
     // Access Control List enforced by calling Smart Contract / DApp
@@ -291,6 +306,7 @@ contract SupplyChain {
   // Define a function 'purchaseItem' that allows the consumer to mark an item 'Purchased'
   // Use the above modifiers to check if the item is received
   function purchaseItem(uint _upc) public 
+    onlyConsumer
     // Call modifier to check if upc has passed previous supply chain stage
     received(_upc)
     

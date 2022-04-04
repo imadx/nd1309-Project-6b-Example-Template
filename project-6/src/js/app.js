@@ -122,10 +122,9 @@ App = {
     },
 
     handleButtonClick: async function(event) {
+        App.getMetaskAccountID();
         App.readForm();
         event.preventDefault();
-
-        App.getMetaskAccountID();
 
         var processId = parseInt($(event.target).data('id'));
         console.log('processId',processId);
